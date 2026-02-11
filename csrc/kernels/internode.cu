@@ -814,11 +814,6 @@ __global__ void __launch_bounds__(((kNumDispatchRDMASenderWarps + 1 + NUM_MAX_NV
                         reinterpret_cast<uint64_t>(rdma_channel_data.recv_buffer(rdma_rank) + dst_slot_idx * num_bytes_per_token);
                     const auto src_ptr =
                         reinterpret_cast<uint64_t>(rdma_channel_data.send_buffer(dst_rdma_rank) + dst_slot_idx * num_bytes_per_token);
-                    if (is_unordered_transport) {
-                        if (lane_id == 0) {
-                            nvshmem_fence();
-                        }
-                    }
                     nvshmemx_qp_char_put_signal_nbi_warp(reinterpret_cast<char*>(dst_ptr),
                                                          reinterpret_cast<const char*>(src_ptr),
                                                          num_bytes_per_msg,
@@ -2122,11 +2117,6 @@ __global__ void __launch_bounds__((kNumForwarders + 1) * 32, 1) combine(int4* co
                             reinterpret_cast<uint64_t>(rdma_channel_data.recv_buffer(rdma_rank) + rdma_slot_idx * num_bytes_per_token);
                         const auto src_ptr =
                             reinterpret_cast<uint64_t>(rdma_channel_data.send_buffer(dst_rdma_rank) + rdma_slot_idx * num_bytes_per_token);
-                        if (is_unordered_transport) {
-                            if (lane_id == 0) {
-                                nvshmem_fence();
-                            }
-                        }
                         nvshmemx_qp_char_put_signal_nbi_warp(reinterpret_cast<char*>(dst_ptr),
                                                              reinterpret_cast<const char*>(src_ptr),
                                                              num_bytes_per_msg,

@@ -339,9 +339,6 @@ __global__ __launch_bounds__(1024, 1) void dispatch(void* packed_recv_x,
         auto dst_p2p_ptr = reinterpret_cast<uint64_t*>(nvshmem_ptr(reinterpret_cast<void*>(dst_ptr), dst_rank));
         if (not is_rank_masked(mask_buffer_ptr, dst_rank)) {
             if (dst_p2p_ptr == 0) {
-                if (is_unordered_transport) {
-                    nvshmem_fence();
-                }
                 nvshmemx_qp_signal_op(dst_ptr, num_tokens_sent_64, NVSHMEM_SIGNAL_ADD, dst_rank, qp_handle[dst_expert_local_idx]);
             } else {
                 st_release_sys_global(dst_p2p_ptr, num_tokens_sent_64);
@@ -942,9 +939,6 @@ __global__ __launch_bounds__(1024, 1) void combine(void* combined_x,
             auto dst_p2p_ptr = reinterpret_cast<uint64_t*>(nvshmem_ptr(reinterpret_cast<void*>(dst_ptr), dst_rank));
             if (not is_rank_masked(mask_buffer_ptr, dst_rank)) {
                 if (dst_p2p_ptr == 0) {
-                    if (is_unordered_transport) {
-                        nvshmem_fence();
-                    }
                     nvshmemx_qp_signal_op(dst_ptr, 1, NVSHMEM_SIGNAL_ADD, dst_rank, qp_handle[local_expert_idx]);
                 } else {
                     st_release_sys_global(dst_p2p_ptr, 1);
